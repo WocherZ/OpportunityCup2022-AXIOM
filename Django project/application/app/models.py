@@ -4,6 +4,9 @@ class Pattern(models.Model):
     number = models.IntegerField()
     description = models.CharField(max_length=128)
 
+    def __str__(self):
+        return str(self.description)
+
     class Meta:
         verbose_name = 'Паттерн'
         verbose_name_plural = 'Паттерны'
@@ -18,9 +21,9 @@ class Pattern(models.Model):
     def set_default_records():
         default_patters = {
             0: "Не является фродом",
-            1: "Операции из разных городов",
-            2: "Большая активность в короткое время",
-            3: "Высокая активность",
+            1: "Много транзакций в короткое время",
+            2: "Высокая активность ночью",
+            3: "Операции из разных городов",
             4: "Аккаунт был просрочен",
             5: "Паспорт был просрочен",
             6: "Операции с одного терминала из разных городов",
@@ -130,8 +133,52 @@ class Transaction(models.Model):
         one_transaction.patterns.add(Pattern.objects.get(id=1))
         one_transaction.save()
 
+    def create_transaction(self, dict, patterns=[]):
+        one_transaction = Transaction.objects.create(
+            date=dict.get('date'),
+            card=dict.get('card'),
+            account=dict.get('account'),
+            account_valid_to=dict.get('account_valid_to'),
+            client=dict.get('client'),
+            last_name=dict.get('last_name'),
+            first_name=dict.get('first_name'),
+            patronymic=dict.get('patronymic'),
+            date_of_birth=dict.get('date_of_birth'),
+            passport=dict.get('passport'),
+            passport_valid_to=dict.get('passport_valid_to'),
+            phone=dict.get('phone'),
+            oper_type=dict.get('oper_type'),
+            amount=dict.get('amount'),
+            oper_result=dict.get('oper_result'),
+            terminal=dict.get('terminal'),
+            terminal_type=dict.get('terminal_type'),
+            city=dict.get('city'),
+            address=dict.get('address')
+        )
+        for pattern in patterns:  # pattern - номер паттерна по таблице
+            one_transaction.patterns.add(Pattern.objects.get(id=pattern))
+        one_transaction.save()
 
-
+    def get_last_n_records(self, n):
+        result = []
+        result
+        last_n = Transaction.objects.all().order_by('-id')[0:n][::-1]
+        for transaction in last_n:
+            # transaction = transaction.first()
+            result.append({
+                #'date': getattr(transaction,'date'),
+                    #transaction.object.values('date'),
+                'last_name': getattr(transaction,'last_name'),
+                'first_name': getattr(transaction,'first_name'),
+                #'patronymic': getattr(transaction,'patronymic'),
+                #'passport': getattr(transaction,'passport'),
+                #'phone': getattr(transaction,'phone'),
+                #'oper_type': getattr(transaction,'oper_type'),
+                #'amount': str(getattr(transaction,'amount')),
+                #'pattern': "Да" if transaction.patterns else "Нет",
+                #'pattern_description': [str(x) for x in transaction.patterns.all()]
+            })
+        return result
 
 # General methods
 

@@ -1,6 +1,6 @@
 console.log("Hello");
 console.log(window.location.host)
-let connectionString = 'ws://' + window.location.host + '/ws/some_url';
+let connectionString = 'ws://' + window.location.host + '/ws';
 let socket = new WebSocket(connectionString);
 
 
